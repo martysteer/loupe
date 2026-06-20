@@ -104,4 +104,4 @@ CC-BY
 
 Built with Clojure and love for clean data.
 
-Co-Authored-By: Claude Sonnet 4.5
+Co-Authored-By: Marty and Claude
