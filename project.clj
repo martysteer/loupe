@@ -1,4 +1,4 @@
-(defproject com.loupe/loupe "0.1.0-SNAPSHOT"
+(defproject com.loupe/loupe "0.1.0"
   :description "OpenRefine extension for one-click text data quality checks"
   :license {:name "CC-BY"}
   :dependencies [[org.clojure/clojure "1.12.3"]]
