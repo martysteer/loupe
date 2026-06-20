@@ -1,1 +1,6 @@
 .DS_Store
+target/
+.lein-*
+.nrepl-port
+extension/module/MOD-INF/lib/*.jar
+dist/
