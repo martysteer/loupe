@@ -35,9 +35,7 @@ Click any column header → Facet. Three Loupe submenu groups provide 31 text qu
 
 Each check creates a text facet grouping cells by detected pattern or issue type.
 
-## Documentation
-
-See [`loupe-research-plan.md`](./docs/2026-06-20 loupe-research-plan) for the planned design and roadmap.
+See [`OpenRefine Data Quality Facets.md`](./OpenRefine Data Quality Facets.md) for the current list of functions.
 
 ## License
 
