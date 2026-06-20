@@ -1,11 +1,7 @@
 var ClientSideResourceManager = Packages.com.google.refine.ClientSideResourceManager;
 
 function init() {
-  // Load loupe.checks namespace from our bundled jar.
-  // Butterfly's module classloader doesn't feed into Clojure's require mechanism,
-  // so we manually load the AOT-compiled init class with a URLClassLoader that
-  // can see both loupe.jar and Clojure's classes. This registers the namespace
-  // and its vars in Clojure's global registry.
+  // Load all loupe.checks.* namespaces from bundled jar
   try {
     var modulePath = module.getPath();
     var jarFile = new java.io.File(modulePath, "MOD-INF/lib/loupe.jar");
@@ -16,9 +12,24 @@ function init() {
     urls[0] = jarUrl;
     var jarCL = new java.net.URLClassLoader(urls, parentCL);
 
-    java.lang.Class.forName("loupe.checks__init", true, jarCL);
+    var namespaces = [
+      "loupe.checks.encoding",
+      "loupe.checks.whitespace",
+      "loupe.checks.normalization",
+      "loupe.checks.script",
+      "loupe.checks.diacritics",
+      "loupe.checks.casing",
+      "loupe.checks.punctuation",
+      "loupe.checks.content",
+      "loupe.checks.quality"
+    ];
+
+    for (var i = 0; i < namespaces.length; i++) {
+      var initClass = namespaces[i].replace(/\./g, "/") + "__init";
+      java.lang.Class.forName(initClass, true, jarCL);
+    }
   } catch (e) {
-    java.lang.System.err.println("Loupe: Failed to load loupe.checks namespace: " + e);
+    java.lang.System.err.println("Loupe: Failed to load namespaces: " + e);
   }
 
   ClientSideResourceManager.addPaths(
