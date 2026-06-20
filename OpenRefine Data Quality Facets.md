@@ -1,8 +1,19 @@
-# The Official claudie.com™ OpenRefine Data Quality Facets
+# OpenRefine Data Quality Facets
 
 *"Because your data deserves better"*
 
 A comprehensive collection of Clojure expressions for OpenRefine custom text facets to analyze linguistic and data quality characteristics.
+
+
+
+## How to Use
+
+1. In OpenRefine, click the column dropdown → **Facet** → **Custom text facet**
+2. Change the language dropdown to **Clojure**
+3. Paste one of the expressions below
+4. Click OK
+
+
 
 ---
 
@@ -23,15 +34,9 @@ A comprehensive collection of Clojure expressions for OpenRefine custom text fac
 13. [Ligature Detection](#ligature-detection)
 14. [Length Metrics](#length-metrics)
 15. [Data Quality Facets](#data-quality-facets)
+16. [Quick Reference: Unicode Escape Codes](#quick-reference-unicode-escape-codes)
 
----
 
-## How to Use
-
-1. In OpenRefine, click the column dropdown → **Facet** → **Custom text facet**
-2. Change the language dropdown to **Clojure**
-3. Paste one of the expressions below
-4. Click OK
 
 ---
 
@@ -76,6 +81,8 @@ A comprehensive collection of Clojure expressions for OpenRefine custom text fac
 (let [normalized (java.text.Normalizer/normalize value java.text.Normalizer$Form/NFD)]
   (count (re-seq #"\p{M}" normalized)))
 ```
+
+
 
 ---
 
@@ -132,6 +139,8 @@ A comprehensive collection of Clojure expressions for OpenRefine custom text fac
     :else "LTR"))
 ```
 
+
+
 ---
 
 ## Case Patterns
@@ -172,6 +181,8 @@ A comprehensive collection of Clojure expressions for OpenRefine custom text fac
   (clojure.string/join "-" patterns))
 ```
 
+
+
 ---
 
 ## Unicode Normalization
@@ -187,6 +198,8 @@ A comprehensive collection of Clojure expressions for OpenRefine custom text fac
     (= value nfd) "NFD normalized"
     :else "Non-normalized"))
 ```
+
+
 
 ---
 
@@ -224,6 +237,8 @@ A comprehensive collection of Clojure expressions for OpenRefine custom text fac
     :else "Mixed"))
 ```
 
+
+
 ---
 
 ## Whitespace Analysis
@@ -242,6 +257,8 @@ A comprehensive collection of Clojure expressions for OpenRefine custom text fac
     (some #(re-matches #"U\+200[0-9A-F]" %) types) "has special Unicode spaces"
     :else (str "whitespace: " (clojure.string/join "," types))))
 ```
+
+
 
 ---
 
@@ -266,6 +283,8 @@ A comprehensive collection of Clojure expressions for OpenRefine custom text fac
   :else "No quotes")
 ```
 
+
+
 ---
 
 ## Numeric Systems
@@ -283,6 +302,8 @@ A comprehensive collection of Clojure expressions for OpenRefine custom text fac
     :else "No numerals"))
 ```
 
+
+
 ---
 
 ## Emoji Detection
@@ -293,6 +314,8 @@ A comprehensive collection of Clojure expressions for OpenRefine custom text fac
     (str (count emoji) " emoji: " (apply str (take 5 emoji)))
     "no emoji"))
 ```
+
+
 
 ---
 
@@ -308,6 +331,8 @@ A comprehensive collection of Clojure expressions for OpenRefine custom text fac
                  (format "%.1f" (double (/ (reduce + lengths) (count lengths))))
                  "0")))
 ```
+
+
 
 ---
 
@@ -325,6 +350,8 @@ A comprehensive collection of Clojure expressions for OpenRefine custom text fac
   :else "OK")
 ```
 
+
+
 ---
 
 ## Ligature Detection
@@ -335,6 +362,8 @@ A comprehensive collection of Clojure expressions for OpenRefine custom text fac
     (str "ligatures: " (apply str (set ligatures)))
     "no ligatures"))
 ```
+
+
 
 ---
 
@@ -361,6 +390,8 @@ A comprehensive collection of Clojure expressions for OpenRefine custom text fac
     (clojure.string/replace #"[0-9]" "0")
     (clojure.string/replace #"\s+" "_"))
 ```
+
+
 
 ---
 
@@ -550,6 +581,8 @@ A comprehensive collection of Clojure expressions for OpenRefine custom text fac
        (when (re-find #"[\u0080-\uFFFF]" s) " [UTF]")))
 ```
 
+
+
 ---
 
 ## Quick Reference: Unicode Escape Codes
@@ -566,6 +599,8 @@ A comprehensive collection of Clojure expressions for OpenRefine custom text fac
 | `�` | `\uFFFD` | Replacement character |
 | ` ` | `\u200B` | Zero-width space |
 | `Ã` | `\u00C3` | Common mojibake indicator |
+
+
 
 ---
 
