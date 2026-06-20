@@ -5,5 +5,13 @@
   :source-paths ["src"]
   :test-paths ["test"]
   :target-path "target"
-  :aot [loupe.checks]
+  :aot [loupe.checks.encoding
+        loupe.checks.whitespace
+        loupe.checks.normalization
+        loupe.checks.script
+        loupe.checks.diacritics
+        loupe.checks.casing
+        loupe.checks.punctuation
+        loupe.checks.content
+        loupe.checks.quality]
   :jar-name "loupe.jar")
