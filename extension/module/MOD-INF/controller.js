@@ -25,7 +25,7 @@ function init() {
     ];
 
     for (var i = 0; i < namespaces.length; i++) {
-      var initClass = namespaces[i].replace(/\./g, "/") + "__init";
+      var initClass = namespaces[i] + "__init";
       java.lang.Class.forName(initClass, true, jarCL);
     }
   } catch (e) {
