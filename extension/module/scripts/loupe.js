@@ -8,7 +8,7 @@ DataTableColumnHeaderUI.extendMenu(function (column, columnHeaderUI, menu) {
         ui.browsingEngine.addFacet("list", {
           "name": "Loupe: Encoding Issues \u2014 " + column.name,
           "columnName": column.name,
-          "expression": "clojure:(do (require 'loupe.checks) (loupe.checks/encoding-issues value))"
+          "expression": "clojure:((resolve 'loupe.checks/encoding-issues) value)"
         });
       }
     }
