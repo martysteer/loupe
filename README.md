@@ -2,7 +2,7 @@
 
 An OpenRefine extension for spotting data-quality problems in text — especially messy, multilingual, transliterated metadata.
 
-> **Status:** Phase 0 complete. Clojure binding validated. One-click encoding issue detection works.
+> **Status:** Phase 1 complete. Full v2 facet library ported. 30+ text quality checks across encoding, scripts, normalization, diacritics, casing, punctuation, and content analysis.
 
 ## About
 
@@ -21,13 +21,19 @@ It will flag things such as:
 1. Clone and build: `make extension`
 2. Install: `make install`
 3. Restart OpenRefine
-4. Column dropdown → Facet → **Loupe: Encoding Issues**
+4. Column dropdown → Facet → **Loupe** submenus
 
 Requires: Leiningen, OpenRefine 3.10.x, macOS (default extensions path).
 
 ## Usage
 
-Click any column header → Facet → **Loupe: Encoding Issues**. A text facet appears grouping cells by encoding issue type (CLEAN, EMPTY, REPLACEMENT_CHAR, CONTROL_CHAR, BOM, INVISIBLE_FORMATTER, MOJIBAKE).
+Click any column header → Facet. Three Loupe submenu groups provide 31 text quality checks:
+
+- **Loupe: Quality** — composite checks, encoding issues, whitespace analysis, normalization status, reconciliation readiness
+- **Loupe: Scripts & Characters** — script detection, directionality, diacritics analysis, case patterns
+- **Loupe: Content Analysis** — punctuation, quotes, numeric systems, emoji, word stats, ligatures, character categories
+
+Each check creates a text facet grouping cells by detected pattern or issue type.
 
 ## Documentation
 
