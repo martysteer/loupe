@@ -2,7 +2,7 @@
 
 An OpenRefine extension for spotting data-quality problems in text — especially messy, multilingual, transliterated metadata.
 
-> **Status:** planning. Not yet built or released.
+> **Status:** Phase 0 complete. Clojure binding validated. One-click encoding issue detection works.
 
 ## About
 
@@ -16,13 +16,18 @@ It will flag things such as:
 - inconsistent accents and apostrophes in transliteration
 - empty, placeholder, or obviously broken values
 
-## Installation
+## Installation (for testing)
 
-_Coming with the first release._
+1. Clone and build: `make extension`
+2. Install: `make install`
+3. Restart OpenRefine
+4. Column dropdown → Facet → **Loupe: Encoding Issues**
+
+Requires: Leiningen, OpenRefine 3.10.x, macOS (default extensions path).
 
 ## Usage
 
-_Coming with the first release._
+Click any column header → Facet → **Loupe: Encoding Issues**. A text facet appears grouping cells by encoding issue type (CLEAN, EMPTY, REPLACEMENT_CHAR, CONTROL_CHAR, BOM, INVISIBLE_FORMATTER, MOJIBAKE).
 
 ## Documentation
 
