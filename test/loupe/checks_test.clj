@@ -46,9 +46,12 @@
     (is (= "INVISIBLE_FORMATTER" (encoding-issues "text\u2069more"))))
 
   (testing "mojibake — UTF-8 decoded as Latin-1"
-    (is (= "MOJIBAKE" (encoding-issues "\u00C3\u0080")))
+    (is (= "MOJIBAKE" (encoding-issues "\u00C3\u00A0")))
     (is (= "MOJIBAKE" (encoding-issues "\u00C3\u00BF")))
     (is (= "MOJIBAKE" (encoding-issues "Biblioth\u00C3\u00A8que"))))
+
+  (testing "mojibake in C1 range triggers both control char and mojibake"
+    (is (= "CONTROL_CHAR|MOJIBAKE" (encoding-issues "\u00C3\u0080"))))
 
   (testing "multiple issues — pipe-separated, in check order"
     (is (= "REPLACEMENT_CHAR|BOM"
