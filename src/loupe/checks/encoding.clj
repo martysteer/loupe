@@ -1,4 +1,4 @@
-(ns loupe.checks
+(ns loupe.checks.encoding
   (:require [clojure.string :as str]))
 
 (defn encoding-issues

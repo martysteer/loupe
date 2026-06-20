@@ -1,6 +1,6 @@
-(ns loupe.checks-test
+(ns loupe.checks.encoding-test
   (:require [clojure.test :refer [deftest is testing]]
-            [loupe.checks :refer [encoding-issues]]))
+            [loupe.checks.encoding :refer [encoding-issues]]))
 
 (deftest encoding-issues-test
   (testing "nil and blank input"
