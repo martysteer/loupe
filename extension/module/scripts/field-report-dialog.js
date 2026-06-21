@@ -53,7 +53,7 @@ var LoupeFieldReportPresets = {
 
 function LoupeFieldReportDialog(column) {
   this._column = column;
-  this._rowCap = 5000;
+
   this._valueCap = 20;
   this._results = {};
   this._createDialog();
@@ -202,168 +202,96 @@ LoupeFieldReportDialog.prototype._generate = function() {
   this._results = {};
   this._elmts.tabBar.empty();
   this._elmts.resultsContainer.empty();
-  this._elmts.statusText.text("Fetching row indices...");
+  this._elmts.statusText.text("Computing report...");
   this._elmts.generateButton.prop("disabled", true);
 
-  // Fetch CSRF token first (required by OpenRefine 3.10+)
-  $.get("command/core/get-csrf-token", function(tokenData) {
-    self._csrfToken = tokenData.token;
-
-    self._fetchRowIndices(function(rowIndices, totalFiltered) {
-      if (rowIndices.length === 0) {
-        self._elmts.statusText.text("No visible rows to analyze.");
-        self._elmts.generateButton.prop("disabled", false);
-        return;
-      }
-      self._rowIndices = rowIndices;
-      self._totalFiltered = totalFiltered;
-      self._runEvaluations();
-    });
-  }, "json").fail(function() {
-    self._elmts.statusText.text("Error: could not get CSRF token.");
-    self._elmts.generateButton.prop("disabled", false);
-  });
-};
-
-LoupeFieldReportDialog.prototype._fetchRowIndices = function(callback) {
-  var self = this;
-  var engine = ui.browsingEngine.getJSON();
-  var indices = [];
-  var start = 0;
-  var batchSize = 200;
-
-  function fetchBatch() {
-    $.post(
-      "command/core/get-rows",
-      {
-        project: theProject.id,
-        engine: JSON.stringify(engine),
-        start: start,
-        limit: batchSize
-      },
-      function(data) {
-        if (!data || !data.rows) {
-          self._elmts.statusText.text("Error fetching rows.");
-          self._elmts.generateButton.prop("disabled", false);
-          return;
-        }
-
-        for (var r = 0; r < data.rows.length; r++) {
-          indices.push(data.rows[r].i);
-          if (indices.length >= self._rowCap) break;
-        }
-
-        if (indices.length >= self._rowCap || start + batchSize >= data.filtered) {
-          callback(indices, data.filtered);
-        } else {
-          start += batchSize;
-          self._elmts.statusText.text("Fetching rows... " + indices.length + " so far");
-          fetchBatch();
-        }
-      },
-      "json"
-    ).fail(function() {
-      self._elmts.statusText.text("Error fetching rows.");
-      self._elmts.generateButton.prop("disabled", false);
-    });
-  }
-
-  fetchBatch();
-};
-
-LoupeFieldReportDialog.prototype._runEvaluations = function() {
-  var self = this;
-  var combos = [];
-
+  // Build combos list for sequential compute-facets calls
+  this._combos = [];
   for (var c = 0; c < this._selectedColumns.length; c++) {
+    this._results[this._selectedColumns[c].name] = {};
     for (var f = 0; f < this._selectedFunctions.length; f++) {
-      combos.push({
+      this._combos.push({
         column: this._selectedColumns[c],
         fn: this._selectedFunctions[f]
       });
     }
   }
 
-  var total = combos.length;
-  var current = 0;
-
-  for (var c2 = 0; c2 < this._selectedColumns.length; c2++) {
-    this._results[this._selectedColumns[c2].name] = {};
-  }
-
-  function runNext() {
-    if (current >= combos.length) {
-      self._renderReport();
-      return;
-    }
-
-    var combo = combos[current];
-    current++;
-    self._elmts.statusText.text(
-      "Analyzing " + combo.column.name + ": " + combo.fn.label +
-      "... (" + current + "/" + total + ")"
-    );
-
-    self._evaluateFunction(combo.column, combo.fn, function(freqs) {
-      self._results[combo.column.name][combo.fn.id] = freqs;
-      runNext();
-    });
-  }
-
-  runNext();
+  this._comboIndex = 0;
+  this._runNextCombo();
 };
 
-LoupeFieldReportDialog.prototype._evaluateFunction = function(column, fn, callback) {
+LoupeFieldReportDialog.prototype._runNextCombo = function() {
   var self = this;
-  var freqs = {};
-  var batchSize = 500;
-  var batches = [];
 
-  for (var i = 0; i < this._rowIndices.length; i += batchSize) {
-    batches.push(this._rowIndices.slice(i, i + batchSize));
+  if (this._comboIndex >= this._combos.length) {
+    this._renderReport();
+    return;
   }
 
-  var batchIndex = 0;
+  var combo = this._combos[this._comboIndex];
+  this._comboIndex++;
 
-  function runBatch() {
-    if (batchIndex >= batches.length) {
-      callback(freqs);
-      return;
-    }
+  this._elmts.statusText.text(
+    "Analyzing " + combo.column.name + ": " + combo.fn.label +
+    "... (" + this._comboIndex + "/" + this._combos.length + ")"
+  );
 
-    var batch = batches[batchIndex];
-    batchIndex++;
+  // Use compute-facets API — same code path as real facets, guarantees
+  // Clojure expressions work correctly with all bindings.
+  var engine = ui.browsingEngine.getJSON();
+  engine.facets.push({
+    "type": "list",
+    "name": "__loupe_report__",
+    "columnName": combo.column.name,
+    "expression": combo.fn.expression,
+    "omitBlank": false,
+    "omitError": false,
+    "selection": [],
+    "selectBlank": false,
+    "selectError": false,
+    "invert": false
+  });
 
-    $.post(
-      "command/core/preview-expression",
-      {
-        project: theProject.id,
-        cellIndex: column.cellIndex,
-        rowIndices: JSON.stringify(batch),
-        expression: fn.expression,
-        csrf_token: self._csrfToken
-      },
-      function(data) {
-        if (data && data.code === "ok" && data.results) {
-          for (var r = 0; r < data.results.length; r++) {
-            var val = data.results[r].value;
-            if (val === undefined || val === null) val = "(null)";
-            val = String(val);
-            freqs[val] = (freqs[val] || 0) + 1;
+  $.post(
+    "command/core/compute-facets",
+    {
+      project: theProject.id,
+      engine: JSON.stringify(engine)
+    },
+    function(data) {
+      var freqs = {};
+      if (data && data.facets) {
+        // Our analysis facet is the last one in the array
+        var ourFacet = data.facets[data.facets.length - 1];
+        if (ourFacet && ourFacet.choices) {
+          var totalCount = 0;
+          for (var i = 0; i < ourFacet.choices.length; i++) {
+            var choice = ourFacet.choices[i];
+            var label = (choice.v && choice.v.l !== undefined) ? String(choice.v.l) : "(unknown)";
+            freqs[label] = choice.c;
+            totalCount += choice.c;
           }
-        } else if (data && data.code === "error") {
-          freqs["Error: " + (data.message || "unknown")] = -1;
+          // Include blank count if present
+          if (ourFacet.blankCount && ourFacet.blankCount > 0) {
+            freqs["(blank)"] = ourFacet.blankCount;
+            totalCount += ourFacet.blankCount;
+          }
+          if (ourFacet.errorCount && ourFacet.errorCount > 0) {
+            freqs["(error)"] = ourFacet.errorCount;
+            totalCount += ourFacet.errorCount;
+          }
+          self._totalRowCount = totalCount;
         }
-        runBatch();
-      },
-      "json"
-    ).fail(function() {
-      freqs["Error: request failed"] = -1;
-      runBatch();
-    });
-  }
-
-  runBatch();
+      }
+      self._results[combo.column.name][combo.fn.id] = freqs;
+      self._runNextCombo();
+    },
+    "json"
+  ).fail(function() {
+    self._results[combo.column.name][combo.fn.id] = {"Error: request failed": -1};
+    self._runNextCombo();
+  });
 };
 
 LoupeFieldReportDialog.prototype._renderReport = function() {
@@ -377,11 +305,7 @@ LoupeFieldReportDialog.prototype._renderReport = function() {
     return;
   }
 
-  var statusMsg = this._rowIndices.length + " rows analyzed";
-  if (this._totalFiltered > this._rowCap) {
-    statusMsg = "Showing results for " + this._rowIndices.length +
-      " of " + this._totalFiltered + " visible rows";
-  }
+  var statusMsg = this._totalRowCount + " rows analyzed";
   this._elmts.statusText.text(statusMsg);
 
   // Create a content div for each column (hidden by default)
@@ -396,15 +320,6 @@ LoupeFieldReportDialog.prototype._renderReport = function() {
     this._renderColumnResults(content, col.name);
     this._elmts.resultsContainer.append(content);
     this._tabContents[col.name] = content;
-  }
-
-  // Row cap warning
-  if (this._totalFiltered > this._rowCap) {
-    var warning = $("<div class='field-report-row-warning'></div>").text(
-      "Analyzed " + this._rowIndices.length + " of " +
-      this._totalFiltered + " visible rows. Apply filters to narrow the dataset."
-    );
-    this._elmts.resultsContainer.prepend(warning);
   }
 
   // Tab click handler
