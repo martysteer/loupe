@@ -1,6 +1,6 @@
 (ns loupe.checks.glossary-test
   (:require [clojure.test :refer [deftest is testing]]
-            [loupe.checks.glossary :refer [tokenize word-index word-glossary]]))
+            [loupe.checks.glossary :refer [tokenize word-index]]))
 
 (deftest tokenize-test
   (testing "Latin text"
