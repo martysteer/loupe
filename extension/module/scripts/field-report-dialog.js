@@ -169,3 +169,190 @@ LoupeFieldReportDialog.prototype._updateGenerateButton = function() {
   var hasFns = this._elmts.functionCheckboxes.find("input:checked").length > 0;
   this._elmts.generateButton.prop("disabled", !(hasCols && hasFns));
 };
+
+LoupeFieldReportDialog.prototype._generate = function() {
+  var self = this;
+
+  // Collect selected columns
+  this._selectedColumns = [];
+  this._elmts.columnCheckboxes.find("input:checked").each(function() {
+    var colName = $(this).attr("data-col-name");
+    for (var i = 0; i < theProject.columnModel.columns.length; i++) {
+      if (theProject.columnModel.columns[i].name === colName) {
+        self._selectedColumns.push(theProject.columnModel.columns[i]);
+        break;
+      }
+    }
+  });
+
+  // Collect selected functions
+  this._selectedFunctions = [];
+  this._elmts.functionCheckboxes.find("input:checked").each(function() {
+    var fnId = $(this).attr("data-fn-id");
+    for (var i = 0; i < LoupeFieldReportFunctions.length; i++) {
+      if (LoupeFieldReportFunctions[i].id === fnId) {
+        self._selectedFunctions.push(LoupeFieldReportFunctions[i]);
+        break;
+      }
+    }
+  });
+
+  if (this._selectedColumns.length === 0 || this._selectedFunctions.length === 0) return;
+
+  this._results = {};
+  this._elmts.tabBar.empty();
+  this._elmts.resultsContainer.empty();
+  this._elmts.statusText.text("Fetching row indices...");
+  this._elmts.generateButton.prop("disabled", true);
+
+  this._fetchRowIndices(function(rowIndices, totalFiltered) {
+    if (rowIndices.length === 0) {
+      self._elmts.statusText.text("No visible rows to analyze.");
+      self._elmts.generateButton.prop("disabled", false);
+      return;
+    }
+    self._rowIndices = rowIndices;
+    self._totalFiltered = totalFiltered;
+    self._runEvaluations();
+  });
+};
+
+LoupeFieldReportDialog.prototype._fetchRowIndices = function(callback) {
+  var self = this;
+  var engine = ui.browsingEngine.getJSON();
+  var indices = [];
+  var start = 0;
+  var batchSize = 200;
+
+  function fetchBatch() {
+    $.post(
+      "command/core/get-rows",
+      {
+        project: theProject.id,
+        engine: JSON.stringify(engine),
+        start: start,
+        limit: batchSize
+      },
+      function(data) {
+        if (!data || !data.rows) {
+          self._elmts.statusText.text("Error fetching rows.");
+          self._elmts.generateButton.prop("disabled", false);
+          return;
+        }
+
+        for (var r = 0; r < data.rows.length; r++) {
+          indices.push(data.rows[r].i);
+          if (indices.length >= self._rowCap) break;
+        }
+
+        if (indices.length >= self._rowCap || start + batchSize >= data.filtered) {
+          callback(indices, data.filtered);
+        } else {
+          start += batchSize;
+          self._elmts.statusText.text("Fetching rows... " + indices.length + " so far");
+          fetchBatch();
+        }
+      },
+      "json"
+    ).fail(function() {
+      self._elmts.statusText.text("Error fetching rows.");
+      self._elmts.generateButton.prop("disabled", false);
+    });
+  }
+
+  fetchBatch();
+};
+
+LoupeFieldReportDialog.prototype._runEvaluations = function() {
+  var self = this;
+  var combos = [];
+
+  for (var c = 0; c < this._selectedColumns.length; c++) {
+    for (var f = 0; f < this._selectedFunctions.length; f++) {
+      combos.push({
+        column: this._selectedColumns[c],
+        fn: this._selectedFunctions[f]
+      });
+    }
+  }
+
+  var total = combos.length;
+  var current = 0;
+
+  for (var c2 = 0; c2 < this._selectedColumns.length; c2++) {
+    this._results[this._selectedColumns[c2].name] = {};
+  }
+
+  function runNext() {
+    if (current >= combos.length) {
+      self._renderReport();
+      return;
+    }
+
+    var combo = combos[current];
+    current++;
+    self._elmts.statusText.text(
+      "Analyzing " + combo.column.name + ": " + combo.fn.label +
+      "... (" + current + "/" + total + ")"
+    );
+
+    self._evaluateFunction(combo.column, combo.fn, function(freqs) {
+      self._results[combo.column.name][combo.fn.id] = freqs;
+      runNext();
+    });
+  }
+
+  runNext();
+};
+
+LoupeFieldReportDialog.prototype._evaluateFunction = function(column, fn, callback) {
+  var self = this;
+  var freqs = {};
+  var batchSize = 500;
+  var batches = [];
+
+  for (var i = 0; i < this._rowIndices.length; i += batchSize) {
+    batches.push(this._rowIndices.slice(i, i + batchSize));
+  }
+
+  var batchIndex = 0;
+
+  function runBatch() {
+    if (batchIndex >= batches.length) {
+      callback(freqs);
+      return;
+    }
+
+    var batch = batches[batchIndex];
+    batchIndex++;
+
+    $.post(
+      "command/core/preview-expression",
+      {
+        project: theProject.id,
+        cellIndex: column.cellIndex,
+        rowIndices: JSON.stringify(batch),
+        expression: fn.expression
+      },
+      function(data) {
+        if (data && data.code === "ok" && data.results) {
+          for (var r = 0; r < data.results.length; r++) {
+            var val = data.results[r].value;
+            if (val === undefined || val === null) val = "(null)";
+            val = String(val);
+            freqs[val] = (freqs[val] || 0) + 1;
+          }
+        } else if (data && data.code === "error") {
+          freqs["Error: " + (data.message || "unknown")] = -1;
+        }
+        runBatch();
+      },
+      "json"
+    ).fail(function() {
+      freqs["Error: request failed"] = -1;
+      runBatch();
+    });
+  }
+
+  runBatch();
+};
