@@ -1,0 +1,28 @@
+<div class="dialog-frame field-report-dialog">
+  <div class="dialog-header">Loupe: Field Report</div>
+  <div class="dialog-body">
+    <div class="field-report-section">
+      <div class="field-report-section-label">Columns: <button class="button button-small" bind="selectAllCols">All</button> <button class="button button-small" bind="selectNoCols">None</button></div>
+      <div class="field-report-columns" bind="columnCheckboxes"></div>
+    </div>
+    <div class="field-report-section">
+      <div class="field-report-section-label">
+        Preset:
+        <select bind="presetSelect">
+          <option value="quick-scan">Quick Scan</option>
+          <option value="full-audit">Full Audit</option>
+          <option value="script-diacritics">Script &amp; Diacritics</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
+      <div class="field-report-functions" bind="functionCheckboxes"></div>
+    </div>
+    <div class="field-report-actions">
+      <button class="button" bind="generateButton">Generate Report</button>
+      <button class="button" bind="closeButton">Close</button>
+    </div>
+    <div class="field-report-status" bind="statusText"></div>
+    <div class="field-report-tabs" bind="tabBar"></div>
+    <div class="field-report-results-container" bind="resultsContainer"></div>
+  </div>
+</div>
