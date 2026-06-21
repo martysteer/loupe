@@ -157,7 +157,7 @@ Proposed `make` targets (thin orchestration over `clojure`, `java`, `jar`/`zip`;
 
 ---
 
-## 8. Phased plan (refine in Claude Code)
+## 8. Phased plan (refine in Claude Code) [deprecated]
 
 - **Phase 0 — De-risk the binding.** Spikes 1–3. *Exit:* the "hello-loupe" drop-in described in §6.
 - **Phase 1 — Port the core.** Move the v2 facet logic into `loupe.checks` + `loupe.report`, with unit tests. *Exit:* `make test` green; behavioural parity with `OpenRefine_Data_Quality_Facets_v2.md`; zero OpenRefine/CLI deps in the core.
