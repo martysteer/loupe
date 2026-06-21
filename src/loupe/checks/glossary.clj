@@ -47,3 +47,18 @@
            (map #(normalize-case % case-sensitive?))
            distinct
            vec))))
+
+(defn word-glossary
+  "Generate n-grams from tokenized text.
+  Returns a collection of n-gram strings (for multi-valued facets).
+  Unigrams (n=1) returns individual words.
+  Bigrams (n=2) returns consecutive word pairs.
+  If fewer words than n-gram-size, returns empty."
+  [value n-gram-size case-sensitive?]
+  (let [words (tokenize value)]
+    (if (< (count words) n-gram-size)
+      []
+      (->> words
+           (map #(normalize-case % case-sensitive?))
+           (partition n-gram-size 1)
+           (mapv #(str/join " " %))))))

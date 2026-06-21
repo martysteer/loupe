@@ -1,6 +1,6 @@
 (ns loupe.checks.glossary-test
   (:require [clojure.test :refer [deftest is testing]]
-            [loupe.checks.glossary :refer [tokenize word-index]]))
+            [loupe.checks.glossary :refer [tokenize word-index word-glossary]]))
 
 (deftest tokenize-test
   (testing "Latin text"
@@ -51,3 +51,33 @@
 
   (testing "deduplicates prefixes"
     (is (= #{"h"} (set (word-index "hello happy" 1 false))))))
+
+(deftest word-glossary-test
+  (testing "unigrams, case-sensitive"
+    (is (= ["Hello" "beautiful" "world"]
+           (word-glossary "Hello beautiful world" 1 true))))
+
+  (testing "unigrams, case-insensitive"
+    (is (= ["hello" "beautiful" "world"]
+           (word-glossary "Hello beautiful world" 1 false))))
+
+  (testing "bigrams"
+    (is (= ["Hello beautiful" "beautiful world"]
+           (word-glossary "Hello beautiful world" 2 true))))
+
+  (testing "trigrams"
+    (is (= ["Hello beautiful world"]
+           (word-glossary "Hello beautiful world" 3 true))))
+
+  (testing "n-gram size exceeds word count"
+    (is (= [] (word-glossary "Hello" 2 true))))
+
+  (testing "empty input"
+    (is (= [] (word-glossary "" 1 true))))
+
+  (testing "nil input"
+    (is (= [] (word-glossary nil 1 true))))
+
+  (testing "bigrams case-insensitive"
+    (is (= ["hello world" "world test"]
+           (word-glossary "Hello World Test" 2 false)))))
