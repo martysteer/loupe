@@ -62,3 +62,42 @@
            (map #(normalize-case % case-sensitive?))
            (partition n-gram-size 1)
            (mapv #(str/join " " %))))))
+
+(def ^:private concordance-limit 500)
+
+(defn find-concordances
+  "Search for keyword in rows and return KWIC concordance results.
+  Input: rows is a sequence of {:row-index N :text \"...\"}
+  Returns vector of maps {:row N :left \"...\" :keyword \"word\" :right \"...\"}
+  Capped at 500 results."
+  [rows keyword context-size case-sensitive?]
+  (let [match-fn (if case-sensitive?
+                   (fn [word] (= word keyword))
+                   (let [kw-lower (str/lower-case keyword)]
+                     (fn [word] (= (str/lower-case word) kw-lower))))]
+    (loop [remaining rows
+           results []
+           total 0]
+      (if (or (empty? remaining) (>= total concordance-limit))
+        results
+        (let [{:keys [row-index text]} (first remaining)
+              words (vec (tokenize text))
+              word-count (count words)
+              matches (loop [i 0 acc []]
+                        (if (or (>= i word-count) (>= (+ total (count acc)) concordance-limit))
+                          acc
+                          (if (match-fn (nth words i))
+                            (recur (inc i)
+                                   (conj acc
+                                         {:row row-index
+                                          :left (str/join " " (subvec words
+                                                                       (max 0 (- i context-size))
+                                                                       i))
+                                          :keyword (nth words i)
+                                          :right (str/join " " (subvec words
+                                                                        (min (inc i) word-count)
+                                                                        (min (+ i context-size 1) word-count)))}))
+                            (recur (inc i) acc))))]
+          (recur (rest remaining)
+                 (into results matches)
+                 (+ total (count matches))))))))
