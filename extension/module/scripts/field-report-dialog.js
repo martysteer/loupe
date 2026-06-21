@@ -218,7 +218,11 @@ LoupeFieldReportDialog.prototype._generate = function() {
   }
 
   this._comboIndex = 0;
-  this._runNextCombo();
+  var self = this;
+  $.get("command/core/get-csrf-token", function(response) {
+    self._csrfToken = response.token;
+    self._runNextCombo();
+  }, "json");
 };
 
 LoupeFieldReportDialog.prototype._runNextCombo = function() {
@@ -257,12 +261,12 @@ LoupeFieldReportDialog.prototype._runNextCombo = function() {
     "command/core/compute-facets",
     {
       project: theProject.id,
-      engine: JSON.stringify(engine)
+      engine: JSON.stringify(engine),
+      csrf_token: this._csrfToken
     },
     function(data) {
       var freqs = {};
       if (data && data.facets) {
-        // Our analysis facet is the last one in the array
         var ourFacet = data.facets[data.facets.length - 1];
         if (ourFacet && ourFacet.choices) {
           var totalCount = 0;
