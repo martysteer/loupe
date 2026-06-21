@@ -356,3 +356,129 @@ LoupeFieldReportDialog.prototype._evaluateFunction = function(column, fn, callba
 
   runBatch();
 };
+
+LoupeFieldReportDialog.prototype._renderReport = function() {
+  var self = this;
+  this._elmts.tabBar.empty();
+  this._elmts.resultsContainer.empty();
+  this._elmts.generateButton.prop("disabled", false);
+
+  if (this._selectedColumns.length === 0) {
+    this._elmts.statusText.text("No results.");
+    return;
+  }
+
+  var statusMsg = this._rowIndices.length + " rows analyzed";
+  if (this._totalFiltered > this._rowCap) {
+    statusMsg = "Showing results for " + this._rowIndices.length +
+      " of " + this._totalFiltered + " visible rows";
+  }
+  this._elmts.statusText.text(statusMsg);
+
+  // Create a content div for each column (hidden by default)
+  this._tabContents = {};
+  for (var i = 0; i < this._selectedColumns.length; i++) {
+    var col = this._selectedColumns[i];
+    var tab = $("<div class='field-report-tab'></div>").text(col.name);
+    tab.attr("data-col-name", col.name);
+    this._elmts.tabBar.append(tab);
+
+    var content = $("<div></div>").hide();
+    this._renderColumnResults(content, col.name);
+    this._elmts.resultsContainer.append(content);
+    this._tabContents[col.name] = content;
+  }
+
+  // Row cap warning
+  if (this._totalFiltered > this._rowCap) {
+    var warning = $("<div class='field-report-row-warning'></div>").text(
+      "Analyzed " + this._rowIndices.length + " of " +
+      this._totalFiltered + " visible rows. Apply filters to narrow the dataset."
+    );
+    this._elmts.resultsContainer.prepend(warning);
+  }
+
+  // Tab click handler
+  this._elmts.tabBar.on("click", ".field-report-tab", function() {
+    var colName = $(this).attr("data-col-name");
+    self._elmts.tabBar.find(".field-report-tab").removeClass("active");
+    $(this).addClass("active");
+    for (var key in self._tabContents) {
+      self._tabContents[key].hide();
+    }
+    self._tabContents[colName].show();
+  });
+
+  // Activate first tab
+  this._elmts.tabBar.find(".field-report-tab").first().click();
+};
+
+LoupeFieldReportDialog.prototype._renderColumnResults = function(container, colName) {
+  var colResults = this._results[colName] || {};
+
+  for (var i = 0; i < this._selectedFunctions.length; i++) {
+    var fn = this._selectedFunctions[i];
+    var freqs = colResults[fn.id];
+
+    var block = $("<div class='field-report-function-block'></div>");
+    block.append($("<h4></h4>").text(fn.label));
+
+    if (!freqs) {
+      block.append($("<div class='field-report-error'></div>").text("No data"));
+      container.append(block);
+      continue;
+    }
+
+    // Check for error entries
+    var errorKey = null;
+    for (var key in freqs) {
+      if (freqs[key] === -1) {
+        errorKey = key;
+        break;
+      }
+    }
+
+    if (errorKey) {
+      block.append($("<div class='field-report-error'></div>").text(errorKey));
+      container.append(block);
+      continue;
+    }
+
+    // Sort by count descending
+    var entries = [];
+    for (var val in freqs) {
+      entries.push({ value: val, count: freqs[val] });
+    }
+    entries.sort(function(a, b) { return b.count - a.count; });
+
+    var totalCount = 0;
+    for (var e = 0; e < entries.length; e++) {
+      totalCount += entries[e].count;
+    }
+
+    // Build frequency table (top N values)
+    var table = $("<table class='field-report-freq-table'></table>");
+    var displayCount = Math.min(entries.length, this._valueCap);
+    for (var j = 0; j < displayCount; j++) {
+      var entry = entries[j];
+      var pct = totalCount > 0 ? ((entry.count / totalCount) * 100).toFixed(1) : "0.0";
+      var tr = $("<tr></tr>");
+      tr.append($("<td></td>").text(entry.value));
+      tr.append($("<td></td>").text(entry.count));
+      tr.append($("<td></td>").text(pct + "%"));
+      table.append(tr);
+    }
+    block.append(table);
+
+    // "...and N more" footer
+    if (entries.length > this._valueCap) {
+      block.append(
+        $("<div class='field-report-more'></div>").text(
+          "...and " + (entries.length - this._valueCap) + " more values"
+        )
+      );
+    }
+
+    container.append(block);
+  }
+};
