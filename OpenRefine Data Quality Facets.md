@@ -27,14 +27,15 @@ A comprehensive collection of Clojure expressions for OpenRefine custom text fac
 6. [Character Category Analysis](#character-category-analysis)
 7. [Whitespace Analysis](#whitespace-analysis)
 8. [Punctuation Analysis](#punctuation-analysis)
-9. [Numeric Systems](#numeric-systems)
-10. [Emoji Detection](#emoji-detection)
-11. [Word Pattern Analysis](#word-pattern-analysis)
-12. [Encoding Issues](#encoding-issues)
-13. [Ligature Detection](#ligature-detection)
-14. [Length Metrics](#length-metrics)
-15. [Data Quality Facets](#data-quality-facets)
-16. [Quick Reference: Unicode Escape Codes](#quick-reference-unicode-escape-codes)
+9. [Unicode Variants](#unicode-variants)
+10. [Numeric Systems](#numeric-systems)
+11. [Emoji Detection](#emoji-detection)
+12. [Word Pattern Analysis](#word-pattern-analysis)
+13. [Encoding Issues](#encoding-issues)
+14. [Ligature Detection](#ligature-detection)
+15. [Length Metrics](#length-metrics)
+16. [Data Quality Facets](#data-quality-facets)
+17. [Quick Reference: Unicode Escape Codes](#quick-reference-unicode-escape-codes)
 
 
 
@@ -360,6 +361,22 @@ Punctuation inconsistencies are common in transliterated or multilingual data. D
   (re-find #"[\u300C\u300D\u300E\u300F]" value) "CJK quotes"
   :else "No quotes")
 ```
+
+
+
+---
+
+## Unicode Variants
+
+**What it does:** Scans text for Unicode character variants that look similar to ASCII equivalents but are different characters. Reports specific types found: special whitespace (non-breaking space, typographic spaces, ideographic space), invisible characters (zero-width space, joiners, directional marks, bidi controls, BOM), dash variants (en dash, em dash, figure dash, non-breaking hyphen, minus sign, horizontal bar), quote variants (single/double smart quotes, low-9 quotes, guillemets, CJK quotes), and bracket variants (CJK brackets, fullwidth parens/brackets, math angle brackets, ceiling/floor brackets). Returns pipe-separated labels for all variant types found.
+
+**When to use:** Find invisible or confusing character substitutions that break matching, searching, and reconciliation. A non-breaking space looks like a space but doesn't match. An en dash looks like a hyphen but isn't. Smart quotes look like straight quotes but differ. These variants commonly appear from copy-paste, word processors, OCR, or different input methods. Run before any deduplication or reconciliation work.
+
+```clojure
+((resolve 'loupe.checks.content/unicode-variants) value)
+```
+
+**Example output:** `non-breaking space | en dash | double smart quotes`
 
 
 

@@ -367,6 +367,18 @@ DataTableColumnHeaderUI.extendMenu(function (column, columnHeaderUI, menu) {
               "expression": "clojure:((resolve 'loupe.checks.content/dominant-char-type) value)"
             });
           }
+        },
+        {},
+        {
+          id: "loupe/unicode-variants",
+          label: "Unicode Variants",
+          click: function() {
+            ui.browsingEngine.addFacet("list", {
+              "name": "Unicode Variants — " + column.name,
+              "columnName": column.name,
+              "expression": "clojure:((resolve 'loupe.checks.content/unicode-variants) value)"
+            });
+          }
         }
       ]
     },

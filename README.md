@@ -2,7 +2,7 @@
 
 An OpenRefine extension for spotting data-quality problems in text — especially messy, multilingual, transliterated metadata.
 
-> **Status:** 40 text quality checks and linguistic analysis tools across encoding, scripts, normalization, diacritics, casing, punctuation, content, glossary, and index.
+> **Status:** 41 text quality checks and linguistic analysis tools across encoding, scripts, normalization, diacritics, casing, punctuation, content, glossary, and index.
 
 ## About
 

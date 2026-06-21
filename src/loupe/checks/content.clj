@@ -114,3 +114,51 @@
         (> punct (max letters digits symbols)) "Punctuation-dominant"
         (> symbols (max letters digits punct)) "Symbol-dominant"
         :else "Mixed"))))
+
+(defn unicode-variants
+  "Identify Unicode character variants found in text: special whitespace,
+   invisible characters, dash types, quote types, bracket types.
+   Returns pipe-separated labels or 'none'."
+  [value]
+  (if (or (nil? value) (str/blank? (str value)))
+    "EMPTY"
+    (let [s (str value)
+          found (filter identity
+                  [;; Whitespace variants
+                   (when (re-find #"\u00A0" s) "non-breaking space")
+                   (when (re-find #"[\u2000-\u200A]" s) "typographic space")
+                   (when (re-find #"\u202F" s) "narrow no-break space")
+                   (when (re-find #"\u205F" s) "medium math space")
+                   (when (re-find #"\u3000" s) "ideographic space")
+                   ;; Invisible characters
+                   (when (re-find #"\u200B" s) "zero-width space")
+                   (when (re-find #"[\u200C\u200D]" s) "zero-width joiner")
+                   (when (re-find #"[\u200E\u200F]" s) "directional mark")
+                   (when (re-find #"[\u202A-\u202E]" s) "bidi control")
+                   (when (re-find #"\uFEFF" s) "byte order mark")
+                   (when (re-find #"\u2060" s) "word joiner")
+                   ;; Dash variants
+                   (when (re-find #"\u2010" s) "hyphen (U+2010)")
+                   (when (re-find #"\u2011" s) "non-breaking hyphen")
+                   (when (re-find #"\u2012" s) "figure dash")
+                   (when (re-find #"\u2013" s) "en dash")
+                   (when (re-find #"\u2014" s) "em dash")
+                   (when (re-find #"\u2015" s) "horizontal bar")
+                   (when (re-find #"\u2212" s) "minus sign")
+                   ;; Quote variants
+                   (when (re-find #"[\u2018\u2019]" s) "single smart quotes")
+                   (when (re-find #"[\u201C\u201D]" s) "double smart quotes")
+                   (when (re-find #"[\u201A\u201E]" s) "low-9 quotes")
+                   (when (re-find #"[\u00AB\u00BB]" s) "guillemets")
+                   (when (re-find #"[\u2039\u203A]" s) "single guillemets")
+                   (when (re-find #"[\u300C-\u300F]" s) "CJK quotes")
+                   ;; Bracket variants
+                   (when (re-find #"[\u2308-\u230B]" s) "ceiling/floor brackets")
+                   (when (re-find #"[\u27E8\u27E9]" s) "math angle brackets")
+                   (when (re-find #"[\u3008-\u3011]" s) "CJK brackets")
+                   (when (re-find #"[\uFF08\uFF09]" s) "fullwidth parens")
+                   (when (re-find #"[\uFF3B\uFF3D]" s) "fullwidth square brackets")
+                   (when (re-find #"[\uFF5B\uFF5D]" s) "fullwidth curly brackets")])]
+      (if (empty? found)
+        "none"
+        (str/join " | " found)))))
