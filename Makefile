@@ -23,5 +23,7 @@ clean:
 	rm -f $(EXTENSION_DIR)/loupe.jar
 
 zip: extension
-	mkdir -p dist
-	cd extension && zip -r ../dist/loupe.zip module/
+	mkdir -p dist/loupe
+	cp -R extension/module/ dist/loupe/
+	cd dist && zip -r loupe.zip loupe
+	rm -rf dist/loupe

@@ -16,7 +16,11 @@ It will flag things such as:
 - inconsistent accents and apostrophes in transliteration
 - empty, placeholder, or obviously broken values
 
-## Installation (for testing)
+## Installation
+
+For end users: Download `loupe.zip` from releases, unzip, and drag the `loupe` folder into your OpenRefine extensions directory. See [OpenRefine's extension installation docs](https://openrefine.org/docs/manual/installing#installing-extensions) for details.
+
+### Development installation
 
 1. Clone and build: `make extension`
 2. Install: `make install`
