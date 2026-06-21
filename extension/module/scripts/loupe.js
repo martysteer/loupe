@@ -369,6 +369,102 @@ DataTableColumnHeaderUI.extendMenu(function (column, columnHeaderUI, menu) {
           }
         }
       ]
+    },
+    // Loupe: Glossary & Index submenu
+    {
+      id: "loupe/glossary",
+      label: "Loupe: Glossary & Index",
+      submenu: [
+        {
+          id: "loupe/index-1",
+          label: "Index: First Letter",
+          click: function() {
+            ui.browsingEngine.addFacet("list", {
+              "name": "Index (1 letter) — " + column.name,
+              "columnName": column.name,
+              "expression": "clojure:((resolve 'loupe.checks.glossary/word-index) value 1 true)"
+            });
+          }
+        },
+        {
+          id: "loupe/index-1-nocase",
+          label: "Index: First Letter (ignore case)",
+          click: function() {
+            ui.browsingEngine.addFacet("list", {
+              "name": "Index (1 letter, ignore case) — " + column.name,
+              "columnName": column.name,
+              "expression": "clojure:((resolve 'loupe.checks.glossary/word-index) value 1 false)"
+            });
+          }
+        },
+        {
+          id: "loupe/index-2",
+          label: "Index: First 2 Letters",
+          click: function() {
+            ui.browsingEngine.addFacet("list", {
+              "name": "Index (2 letters) — " + column.name,
+              "columnName": column.name,
+              "expression": "clojure:((resolve 'loupe.checks.glossary/word-index) value 2 true)"
+            });
+          }
+        },
+        {
+          id: "loupe/index-2-nocase",
+          label: "Index: First 2 Letters (ignore case)",
+          click: function() {
+            ui.browsingEngine.addFacet("list", {
+              "name": "Index (2 letters, ignore case) — " + column.name,
+              "columnName": column.name,
+              "expression": "clojure:((resolve 'loupe.checks.glossary/word-index) value 2 false)"
+            });
+          }
+        },
+        {},
+        {
+          id: "loupe/glossary-words",
+          label: "Glossary: Words",
+          click: function() {
+            ui.browsingEngine.addFacet("list", {
+              "name": "Glossary (words) — " + column.name,
+              "columnName": column.name,
+              "expression": "clojure:((resolve 'loupe.checks.glossary/word-glossary) value 1 true)"
+            });
+          }
+        },
+        {
+          id: "loupe/glossary-words-nocase",
+          label: "Glossary: Words (ignore case)",
+          click: function() {
+            ui.browsingEngine.addFacet("list", {
+              "name": "Glossary (words, ignore case) — " + column.name,
+              "columnName": column.name,
+              "expression": "clojure:((resolve 'loupe.checks.glossary/word-glossary) value 1 false)"
+            });
+          }
+        },
+        {
+          id: "loupe/glossary-bigrams",
+          label: "Glossary: Bigrams",
+          click: function() {
+            ui.browsingEngine.addFacet("list", {
+              "name": "Glossary (bigrams) — " + column.name,
+              "columnName": column.name,
+              "expression": "clojure:((resolve 'loupe.checks.glossary/word-glossary) value 2 true)"
+            });
+          }
+        },
+        {
+          id: "loupe/glossary-trigrams",
+          label: "Glossary: Trigrams",
+          click: function() {
+            ui.browsingEngine.addFacet("list", {
+              "name": "Glossary (trigrams) — " + column.name,
+              "columnName": column.name,
+              "expression": "clojure:((resolve 'loupe.checks.glossary/word-glossary) value 3 true)"
+            });
+          }
+        }
+      ]
     }
   ]);
 });

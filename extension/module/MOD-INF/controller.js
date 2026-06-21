@@ -21,7 +21,8 @@ function init() {
       "loupe.checks.casing",
       "loupe.checks.punctuation",
       "loupe.checks.content",
-      "loupe.checks.quality"
+      "loupe.checks.quality",
+      "loupe.checks.glossary"
     ];
 
     for (var i = 0; i < namespaces.length; i++) {
