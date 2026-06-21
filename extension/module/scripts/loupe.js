@@ -463,6 +463,14 @@ DataTableColumnHeaderUI.extendMenu(function (column, columnHeaderUI, menu) {
               "expression": "clojure:((resolve 'loupe.checks.glossary/word-glossary) value 3 true)"
             });
           }
+        },
+        {},
+        {
+          id: "loupe/concordance",
+          label: "Concordance...",
+          click: function() {
+            new LoupeConcordanceDialog(column);
+          }
         }
       ]
     }

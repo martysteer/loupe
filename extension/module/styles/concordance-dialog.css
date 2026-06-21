@@ -1,0 +1,77 @@
+.concordance-dialog {
+  min-width: 700px;
+}
+
+.concordance-controls {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.concordance-controls label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.concordance-actions {
+  margin-bottom: 8px;
+}
+
+.concordance-actions .button {
+  margin-right: 8px;
+}
+
+.concordance-status {
+  margin-bottom: 8px;
+  font-style: italic;
+  color: #666;
+}
+
+.concordance-results-container {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+}
+
+.concordance-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.concordance-table th,
+.concordance-table td {
+  padding: 4px 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.concordance-table th {
+  background: #f5f5f5;
+  position: sticky;
+  top: 0;
+}
+
+.concordance-row-num {
+  color: #999;
+  text-align: right;
+  white-space: nowrap;
+}
+
+td.concordance-left {
+  text-align: right;
+  color: #555;
+}
+
+td.concordance-keyword {
+  font-weight: bold;
+  text-align: center;
+  white-space: nowrap;
+}
+
+td.concordance-right {
+  text-align: left;
+  color: #555;
+}

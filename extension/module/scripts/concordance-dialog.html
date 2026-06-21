@@ -1,0 +1,42 @@
+<div class="dialog-frame concordance-dialog">
+  <div class="dialog-header">Concordance: <span bind="columnName"></span></div>
+  <div class="dialog-body">
+    <div class="concordance-controls">
+      <label>Keyword:
+        <input type="text" bind="keywordInput" size="30" />
+      </label>
+      <label>Context:
+        <select bind="contextSize">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3" selected>3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+        words each side
+      </label>
+      <label>
+        <input type="checkbox" bind="caseSensitiveCheck" />
+        Case sensitive
+      </label>
+    </div>
+    <div class="concordance-actions">
+      <button class="button" bind="searchButton">Search</button>
+      <button class="button" bind="closeButton">Close</button>
+    </div>
+    <div class="concordance-status" bind="statusText"></div>
+    <div class="concordance-results-container">
+      <table class="concordance-table">
+        <thead>
+          <tr>
+            <th>Row</th>
+            <th class="concordance-left">Left Context</th>
+            <th>Keyword</th>
+            <th class="concordance-right">Right Context</th>
+          </tr>
+        </thead>
+        <tbody bind="resultsBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>

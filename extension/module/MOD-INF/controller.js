@@ -37,7 +37,16 @@ function init() {
     "project/scripts",
     module,
     [
-      "scripts/loupe.js"
+      "scripts/loupe.js",
+      "scripts/concordance-dialog.js"
+    ]
+  );
+
+  ClientSideResourceManager.addPaths(
+    "project/styles",
+    module,
+    [
+      "styles/concordance-dialog.css"
     ]
   );
 }
