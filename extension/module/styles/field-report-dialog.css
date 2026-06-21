@@ -1,0 +1,141 @@
+.field-report-dialog {
+  min-width: 800px;
+}
+
+.field-report-section {
+  margin-bottom: 12px;
+}
+
+.field-report-section-label {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.field-report-columns,
+.field-report-functions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+
+.field-report-columns label,
+.field-report-functions label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.button-small {
+  padding: 1px 6px;
+  font-size: 11px;
+}
+
+.field-report-actions {
+  margin-bottom: 8px;
+}
+
+.field-report-actions .button {
+  margin-right: 8px;
+}
+
+.field-report-status {
+  margin-bottom: 8px;
+  font-style: italic;
+  color: #666;
+}
+
+.field-report-tabs {
+  display: flex;
+  border-bottom: 2px solid #ddd;
+  margin-bottom: 0;
+}
+
+.field-report-tab {
+  padding: 6px 16px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-bottom: none;
+  margin-bottom: -2px;
+  font-size: 12px;
+  background: #f5f5f5;
+}
+
+.field-report-tab:hover {
+  background: #e8e8e8;
+}
+
+.field-report-tab.active {
+  background: #fff;
+  border-color: #ddd;
+  border-bottom-color: #fff;
+  font-weight: bold;
+}
+
+.field-report-results-container {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-top: none;
+  padding: 12px;
+}
+
+.field-report-function-block {
+  margin-bottom: 16px;
+}
+
+.field-report-function-block h4 {
+  margin: 0 0 4px 0;
+  font-size: 13px;
+  color: #333;
+}
+
+.field-report-freq-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.field-report-freq-table td {
+  padding: 2px 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.field-report-freq-table td:first-child {
+  font-family: monospace;
+}
+
+.field-report-freq-table td:nth-child(2) {
+  text-align: right;
+  color: #666;
+  white-space: nowrap;
+  width: 60px;
+}
+
+.field-report-freq-table td:nth-child(3) {
+  text-align: right;
+  color: #999;
+  white-space: nowrap;
+  width: 60px;
+}
+
+.field-report-more {
+  font-size: 11px;
+  color: #999;
+  font-style: italic;
+}
+
+.field-report-error {
+  color: #c00;
+  font-style: italic;
+}
+
+.field-report-row-warning {
+  background: #fff8e1;
+  padding: 6px 12px;
+  margin-bottom: 12px;
+  border: 1px solid #ffe082;
+  font-size: 12px;
+}
