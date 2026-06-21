@@ -757,6 +757,23 @@ These composite checks run multiple tests and provide aggregated quality assessm
 
 ---
 
+## Field Report
+
+**What it does:** Opens an interactive dialog where you select columns and analysis functions, then generates a tabbed frequency report across the dataset. Each column gets a tab showing value distributions for every selected function — like running multiple facets at once and seeing the results side by side.
+
+**When to use:** Start here for a high-level overview of data quality across multiple columns. Identifies which columns have problems and what kind of problems they are, so you know where to drill down with specific facets. Available from any column header menu under Loupe: Reports.
+
+**Presets:**
+- **Quick Scan** — Quality Grade, Primary Script, Whitespace Types, Normalization, Unicode Variants, Encoding Issues
+- **Full Audit** — All 33 single-value analysis functions
+- **Script & Diacritics** — Primary Script, Mixed Scripts, Directionality, Diacritics Type/Count, Case Pattern
+
+**Limits:** Analyzes up to 5,000 visible rows. Shows top 20 values per function. Respects active facets/filters.
+
+
+
+---
+
 *claudie.com™ - "We judge your data so you don't have to"*
 
 *Last updated: June 2026*

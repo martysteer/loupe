@@ -31,14 +31,15 @@ Requires: Leiningen, OpenRefine 3.10.x, macOS (default extensions path).
 
 ## Usage
 
-Click any column header → Facet. Four Loupe submenu groups provide text quality checks and linguistic analysis:
+Click any column header → Facet. Five Loupe submenu groups provide text quality checks and linguistic analysis:
 
 - **Loupe: Quality** — composite checks, encoding issues, whitespace analysis, normalization status, reconciliation readiness
 - **Loupe: Scripts & Characters** — script detection, directionality, diacritics analysis, case patterns
 - **Loupe: Content Analysis** — punctuation, quotes, numeric systems, emoji, word stats, ligatures, character categories
-- **Loupe: Glossary & Index** — word index by prefix, word/bigram/trigram glossary, KWIC concordance
+- **Loupe: Glossary & Index** — word index by prefix, word/bigram/trigram glossary
+- **Loupe: Reports** — KWIC concordance, multi-column field report
 
-Each check creates a text facet grouping cells by detected pattern or issue type. The concordance feature opens a dialog for keyword-in-context (KWIC) search across visible cells.
+Each check creates a text facet grouping cells by detected pattern or issue type. The concordance feature opens a dialog for keyword-in-context (KWIC) search across visible cells. The field report runs multiple checks across selected columns and displays frequency results in a tabbed overview.
 
 See `OpenRefine Data Quality Facets.md` for the current list of functions.
 
