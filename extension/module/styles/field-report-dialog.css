@@ -1,5 +1,15 @@
 .field-report-dialog {
-  min-width: 800px;
+  min-width: 700px;
+  max-width: 90vw;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.field-report-dialog > .dialog-body {
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
 }
 
 .field-report-section {
@@ -11,11 +21,20 @@
   margin-bottom: 4px;
 }
 
-.field-report-columns,
+.field-report-columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  max-height: 80px;
+  overflow-y: auto;
+}
+
 .field-report-functions {
   display: flex;
   flex-wrap: wrap;
   gap: 4px 16px;
+  max-height: 100px;
+  overflow-y: auto;
 }
 
 .field-report-columns label,
@@ -74,7 +93,7 @@
 }
 
 .field-report-results-container {
-  max-height: 400px;
+  max-height: 300px;
   overflow-y: auto;
   border: 1px solid #ddd;
   border-top: none;

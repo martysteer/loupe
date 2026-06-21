@@ -205,15 +205,23 @@ LoupeFieldReportDialog.prototype._generate = function() {
   this._elmts.statusText.text("Fetching row indices...");
   this._elmts.generateButton.prop("disabled", true);
 
-  this._fetchRowIndices(function(rowIndices, totalFiltered) {
-    if (rowIndices.length === 0) {
-      self._elmts.statusText.text("No visible rows to analyze.");
-      self._elmts.generateButton.prop("disabled", false);
-      return;
-    }
-    self._rowIndices = rowIndices;
-    self._totalFiltered = totalFiltered;
-    self._runEvaluations();
+  // Fetch CSRF token first (required by OpenRefine 3.10+)
+  $.get("command/core/get-csrf-token", function(tokenData) {
+    self._csrfToken = tokenData.token;
+
+    self._fetchRowIndices(function(rowIndices, totalFiltered) {
+      if (rowIndices.length === 0) {
+        self._elmts.statusText.text("No visible rows to analyze.");
+        self._elmts.generateButton.prop("disabled", false);
+        return;
+      }
+      self._rowIndices = rowIndices;
+      self._totalFiltered = totalFiltered;
+      self._runEvaluations();
+    });
+  }, "json").fail(function() {
+    self._elmts.statusText.text("Error: could not get CSRF token.");
+    self._elmts.generateButton.prop("disabled", false);
   });
 };
 
@@ -332,7 +340,8 @@ LoupeFieldReportDialog.prototype._evaluateFunction = function(column, fn, callba
         project: theProject.id,
         cellIndex: column.cellIndex,
         rowIndices: JSON.stringify(batch),
-        expression: fn.expression
+        expression: fn.expression,
+        csrf_token: self._csrfToken
       },
       function(data) {
         if (data && data.code === "ok" && data.results) {
