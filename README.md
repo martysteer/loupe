@@ -2,7 +2,7 @@
 
 An OpenRefine extension for spotting data-quality problems in text — especially messy, multilingual, transliterated metadata.
 
-> **Status:** Phase 1 complete. Full v2 facet library ported. 30+ text quality checks across encoding, scripts, normalization, diacritics, casing, punctuation, and content analysis.
+> **Status:** 40 text quality checks and linguistic analysis tools across encoding, scripts, normalization, diacritics, casing, punctuation, content, glossary, and index.
 
 ## About
 
@@ -31,13 +31,14 @@ Requires: Leiningen, OpenRefine 3.10.x, macOS (default extensions path).
 
 ## Usage
 
-Click any column header → Facet. Three Loupe submenu groups provide 31 text quality checks:
+Click any column header → Facet. Four Loupe submenu groups provide text quality checks and linguistic analysis:
 
 - **Loupe: Quality** — composite checks, encoding issues, whitespace analysis, normalization status, reconciliation readiness
 - **Loupe: Scripts & Characters** — script detection, directionality, diacritics analysis, case patterns
 - **Loupe: Content Analysis** — punctuation, quotes, numeric systems, emoji, word stats, ligatures, character categories
+- **Loupe: Glossary & Index** — word index by prefix, word/bigram/trigram glossary, KWIC concordance
 
-Each check creates a text facet grouping cells by detected pattern or issue type.
+Each check creates a text facet grouping cells by detected pattern or issue type. The concordance feature opens a dialog for keyword-in-context (KWIC) search across visible cells.
 
 See `OpenRefine Data Quality Facets.md` for the current list of functions.
 
