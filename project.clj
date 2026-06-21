@@ -13,5 +13,6 @@
         loupe.checks.casing
         loupe.checks.punctuation
         loupe.checks.content
-        loupe.checks.quality]
+        loupe.checks.quality
+        loupe.checks.glossary]
   :jar-name "loupe.jar")
