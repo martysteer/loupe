@@ -38,7 +38,8 @@ function init() {
     module,
     [
       "scripts/loupe.js",
-      "scripts/concordance-dialog.js"
+      "scripts/concordance-dialog.js",
+      "scripts/field-report-dialog.js"
     ]
   );
 
@@ -46,7 +47,8 @@ function init() {
     "project/styles",
     module,
     [
-      "styles/concordance-dialog.css"
+      "styles/concordance-dialog.css",
+      "styles/field-report-dialog.css"
     ]
   );
 }

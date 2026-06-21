@@ -476,12 +476,25 @@ DataTableColumnHeaderUI.extendMenu(function (column, columnHeaderUI, menu) {
             });
           }
         },
-        {},
+      ]
+    },
+    // Loupe: Reports submenu
+    {
+      id: "loupe/reports",
+      label: "Loupe: Reports",
+      submenu: [
         {
           id: "loupe/concordance",
           label: "Concordance...",
           click: function() {
             new LoupeConcordanceDialog(column);
+          }
+        },
+        {
+          id: "loupe/field-report",
+          label: "Field Report...",
+          click: function() {
+            new LoupeFieldReportDialog(column);
           }
         }
       ]
