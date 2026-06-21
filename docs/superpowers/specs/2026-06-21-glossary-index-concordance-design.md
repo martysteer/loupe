@@ -108,12 +108,14 @@ Menu item "Concordance..." registers a command (not a facet). JS handler opens c
 ### Data flow
 
 1. User fills form, clicks Search
-2. JS sends AJAX request to custom command (`loupe-concordance`)
-3. Command registered in `controller.js` routes to Clojure function
-4. Clojure function receives keyword, context-size, case-sensitive flag, column name, engine config (for visible rows)
-5. Returns JSON array of match objects
-6. JS renders KWIC table from response
-7. If results > 500, shows "Showing 500 of N matches (limited)"
+2. JS fetches visible rows in batches via OpenRefine's `get-rows` API
+3. JS tokenizes each cell value using Unicode-aware word boundary regex
+4. JS searches tokens for keyword match (case-sensitive or insensitive)
+5. JS builds KWIC result objects with left/right context
+6. JS renders KWIC table from results
+7. If results >= 500, shows "limited" warning
+
+**Note:** Concordance runs entirely client-side. Server-side gen-class Command was explored but rejected due to excessive transitive dependency requirements for AOT compilation. The Clojure `find-concordances` function exists in `loupe.checks.glossary` for future server-side migration if needed.
 
 ### KWIC table formatting
 
